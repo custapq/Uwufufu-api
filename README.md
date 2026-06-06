@@ -20,6 +20,7 @@
   - [`client.games`](#clientgames)
   - [`client.selections`](#clientselections)
   - [Errors](#errors)
+  - [Bulk import from JSON](#bulk-import-from-json)
   - [Low-level `request`](#low-level-request)
 - [Enums](#enums)
 - [Raw HTTP endpoints](#raw-http-endpoints)
@@ -239,6 +240,50 @@ try {
 ```
 
 `429` and `5xx` responses are retried automatically (honoring `Retry-After`) up to `maxRetries` before the error is thrown.
+
+### Bulk import from JSON
+
+`importTracks(client, options)` adds a list of YouTube tracks to a worldcup —
+creating a new one or appending to an existing `gameId`. Rows already marked
+`added_to_uwufufu: true` are skipped, and failed rows are left unmarked so a
+re-run retries them.
+
+Input shape (only `url` is required):
+
+```json
+[
+  { "track_name": "ดอกกระเจียวบาน - ก้อง ห้วยไร่", "artist": "GeneLab", "url": "https://www.youtube.com/watch?v=Gy-MZjiFv2M", "added_to_uwufufu": false },
+  { "track_name": "คำขอ - ก้อง ห้วยไร่", "artist": "SOUND ME HANG", "url": "https://www.youtube.com/watch?v=if2kWWiAsJM", "added_to_uwufufu": false }
+]
+```
+
+```ts
+import { createClient, importTracks } from "uwufufu-api";
+import { readFile, writeFile } from "node:fs/promises";
+
+const client = createClient({ token: process.env.UWUFUFU_TOKEN });
+const tracks = JSON.parse(await readFile("tracks.json", "utf8"));
+
+const result = await importTracks(client, {
+  tracks,
+  create: { title: "ก้อง ห้วยไร่ Song Battle", description: "", categoryId: 16 },
+  // or: gameId: 159215  // append to an existing worldcup
+  onProgress: () => writeFile("tracks.json", JSON.stringify(tracks, null, 2)),
+});
+// result: { gameId, slug, created, added, skipped, failed, tracks }
+```
+
+A runnable CLI wrapper is in [`examples/import-from-json.ts`](./examples/import-from-json.ts) — it writes the flag back to the file after each success so it's resume-safe:
+
+```bash
+# Create a new worldcup from the file
+UWUFUFU_TOKEN=… UWUFUFU_TITLE="Song Battle" UWUFUFU_CATEGORY_ID=16 \
+  npx tsx examples/import-from-json.ts tracks.json
+
+# Or append to an existing one
+UWUFUFU_TOKEN=… UWUFUFU_GAME_ID=159215 \
+  npx tsx examples/import-from-json.ts tracks.json
+```
 
 ### Low-level `request`
 

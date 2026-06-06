@@ -25,6 +25,15 @@ export type {
 } from "./resources/games.js";
 export type { AddVideoInput } from "./resources/selections.js";
 
+// JSON import helper
+export { importTracks } from "./importer.js";
+export type {
+  TrackEntry,
+  ImportOptions,
+  ImportResult,
+  ImportEvent,
+} from "./importer.js";
+
 // Types
 export type {
   Visibility,
