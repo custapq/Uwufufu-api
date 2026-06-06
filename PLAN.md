@@ -41,10 +41,12 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase 4 — Feature Coverage  ·  `phase-4-features`
 
-- [ ] 4.1 Games module (list / get / search)
-- [ ] 4.2 Gameplay module (rounds / choices / results)
-- [ ] 4.3 Pagination helpers
-- [ ] 4.4 ครอบ endpoints ที่เหลือ
+> Scope โฟกัส: create-game (video) flow
+
+- [x] 4.1 Games resource → [src/resources/games.ts](src/resources/games.ts) (create/getMine/listMine/update/replace/publish)
+- [x] 4.2 Selections resource → [src/resources/selections.ts](src/resources/selections.ts) (addVideo)
+- [x] 4.3 Pagination type `WorldcupPage` + `listMine({page, limit})`
+- [x] 4.4 wire resources เข้า `UwufufuClient` (`client.games`, `client.selections`)
 
 ## Phase 5 — Testing & Examples  ·  `phase-5-tests`
 

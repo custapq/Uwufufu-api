@@ -15,6 +15,16 @@ export type { ClientConfig, RequestOptions } from "./http.js";
 // Errors
 export { UwufufuApiError, isUwufufuApiError } from "./errors.js";
 
+// Resources
+export { GamesResource } from "./resources/games.js";
+export { SelectionsResource } from "./resources/selections.js";
+export type {
+  CreateGameInput,
+  UpdateGameInput,
+  ListMineParams,
+} from "./resources/games.js";
+export type { AddVideoInput } from "./resources/selections.js";
+
 // Types
 export type {
   Visibility,
@@ -30,5 +40,6 @@ export type {
   CreateGameRequest,
   AddVideoSelectionRequest,
   UpdateGameRequest,
+  WorldcupPage,
   ApiErrorBody,
 } from "./types.js";

@@ -14,7 +14,7 @@
 | 1 | API reconnaissance (create-game flow) | ✅ done |
 | 2 | API modeling & spec | ✅ done |
 | 3 | Core SDK | ✅ done |
-| 4 | Feature coverage | ⬜ |
+| 4 | Feature coverage | ✅ done |
 | 5 | Testing & examples | ⬜ |
 | 6 | Documentation | ⬜ |
 

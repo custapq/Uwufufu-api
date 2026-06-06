@@ -140,6 +140,17 @@ export interface VideoSelection {
   deletedAt: string | null;
 }
 
+/**
+ * Paginated worldcup list, as returned by `GET /games/mine` and the public
+ * `GET /games` search.
+ */
+export interface WorldcupPage {
+  page: number;
+  perPage: number;
+  total: number;
+  worldcups: Game[];
+}
+
 // ----------------------------------------------------------------------------
 // Request bodies
 // ----------------------------------------------------------------------------

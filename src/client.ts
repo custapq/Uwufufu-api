@@ -1,5 +1,7 @@
 import { HttpClient, type ClientConfig, type RequestOptions } from "./http.js";
 import type { LoginResponse, User } from "./types.js";
+import { GamesResource } from "./resources/games.js";
+import { SelectionsResource } from "./resources/selections.js";
 
 /**
  * The uwufufu API client. Create it with {@link createClient}.
@@ -11,8 +13,15 @@ import type { LoginResponse, User } from "./types.js";
 export class UwufufuClient {
   private readonly http: HttpClient;
 
+  /** Worldcup ("game") endpoints. */
+  readonly games: GamesResource;
+  /** Selection (bracket entry) endpoints. */
+  readonly selections: SelectionsResource;
+
   constructor(config: ClientConfig = {}) {
     this.http = new HttpClient(config);
+    this.games = new GamesResource(this.http);
+    this.selections = new SelectionsResource(this.http);
   }
 
   /** Set or replace the access token used for `Authorization: Bearer`. */
