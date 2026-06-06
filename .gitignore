@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env / secrets
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# --- Claude-specific files (kept local, not committed) ---
+CLAUDE.md
+.claude/
+
+# --- Raw captures may contain auth tokens / cookies ---
+# Commit only sanitized samples; ignore raw HAR by default.
+captures/*.har
+captures/raw/
