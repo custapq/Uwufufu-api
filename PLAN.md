@@ -50,9 +50,9 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase 5 — Testing & Examples  ·  `phase-5-tests`
 
-- [ ] 5.1 Unit tests (mock HTTP)
-- [ ] 5.2 Smoke/integration test (optional, gated)
-- [ ] 5.3 Example scripts ใน `examples/`
+- [x] 5.1 Unit tests (mock HTTP) → [test/](test) — 22 tests (http/client/games/selections)
+- [x] 5.2 Gated live integration test → [test/integration.test.ts](test/integration.test.ts) (skip ถ้าไม่มี `UWUFUFU_TOKEN`)
+- [x] 5.3 Example script → [examples/create-video-game.ts](examples/create-video-game.ts) (`npm run example`)
 
 ## Phase 6 — Documentation  ·  `phase-6-docs`
 

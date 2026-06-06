@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "example": "node --import tsx examples/create-video-game.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

@@ -15,7 +15,7 @@
 | 2 | API modeling & spec | ✅ done |
 | 3 | Core SDK | ✅ done |
 | 4 | Feature coverage | ✅ done |
-| 5 | Testing & examples | ⬜ |
+| 5 | Testing & examples | ✅ done |
 | 6 | Documentation | ⬜ |
 
 ## Install

@@ -8,7 +8,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ["src/**/*.ts"],
+    files: ["src/**/*.ts", "test/**/*.ts"],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -20,6 +20,7 @@ export default [
         fetch: "readonly",
         Response: "readonly",
         Request: "readonly",
+        RequestInit: "readonly",
         Headers: "readonly",
         URL: "readonly",
         URLSearchParams: "readonly",
