@@ -6,8 +6,9 @@ uwufufu's API lives at **`https://api.uwufufu.com/v1`** and authenticates with a
 ## How it works
 
 1. `POST /v1/auth/login` with `{ email, password }`.
-2. On success the API issues an **access token**. In the browser it is stored in
-   the `accessToken` cookie.
+2. On success (`201`) the API returns `{ "accessToken": "<token>" }` in the body
+   (and also sets the `accessToken` cookie in-browser). The token observed was a
+   ~187-char string.
 3. All authenticated requests send that token as a header:
 
    ```http
@@ -32,6 +33,14 @@ Validation (observed from the API's own error response):
 
 - `email` — must be a valid email format.
 - `password` — required, string, **8–50 characters**.
+
+Response `201`:
+
+```json
+{ "accessToken": "<~187-char token>" }
+```
+
+The login request is sent by the web app via **XHR** (axios), not `fetch`.
 
 ### `GET /v1/auth/me`
 

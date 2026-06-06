@@ -15,6 +15,22 @@ export default [
         ecmaVersion: 2022,
         sourceType: "module",
       },
+      globals: {
+        // Web/Node runtime globals (Node 18+ / browsers)
+        fetch: "readonly",
+        Response: "readonly",
+        Request: "readonly",
+        Headers: "readonly",
+        URL: "readonly",
+        URLSearchParams: "readonly",
+        AbortSignal: "readonly",
+        AbortController: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        globalThis: "readonly",
+        console: "readonly",
+        process: "readonly",
+      },
     },
     plugins: {
       "@typescript-eslint": tseslint,

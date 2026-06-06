@@ -4,12 +4,15 @@
     "login": {
       "method": "POST",
       "path": "/v1/auth/login",
+      "status": 201,
+      "transport": "XHR (axios), not fetch",
       "request": { "email": "<redacted>", "password": "<redacted>" },
       "validation": {
         "email": "valid email format",
         "password": "string, 8-50 chars, required"
       },
-      "note": "Issues an access token (stored in the accessToken cookie in-browser)."
+      "response": { "accessToken": "<redacted: ~187-char string>" },
+      "note": "Token returned in body and also set as the accessToken cookie in-browser."
     },
     "me": {
       "method": "GET",

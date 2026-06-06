@@ -34,10 +34,10 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase 3 — Core SDK  ·  `phase-3-core`
 
-- [ ] 3.1 HTTP client base (fetch wrapper + config)
-- [ ] 3.2 Auth handling + typed errors
-- [ ] 3.3 Rate-limit / retry helper
-- [ ] 3.4 `createClient()` entry point + type exports
+- [x] 3.1 HTTP client base → [src/http.ts](src/http.ts) (fetch wrapper + config)
+- [x] 3.2 Auth handling + typed errors → [src/errors.ts](src/errors.ts) (`UwufufuApiError`)
+- [x] 3.3 Retry helper (429/5xx + Retry-After + backoff) ใน [src/http.ts](src/http.ts)
+- [x] 3.4 `createClient()` → [src/client.ts](src/client.ts) + exports ใน index
 
 ## Phase 4 — Feature Coverage  ·  `phase-4-features`
 

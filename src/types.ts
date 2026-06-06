@@ -151,6 +151,12 @@ export interface LoginRequest {
   password: string;
 }
 
+/** `POST /v1/auth/login` response (status 201). */
+export interface LoginResponse {
+  /** Bearer access token; also set as the `accessToken` cookie in-browser. */
+  accessToken: string;
+}
+
 /**
  * `POST /v1/games` — create a draft worldcup.
  * The web client also sends `id: 0` and timestamps, but those are assigned
