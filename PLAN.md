@@ -59,3 +59,45 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 - [x] 6.1 API Reference ครบทุก endpoint + enums ใน [README.md](README.md)
 - [x] 6.2 Quickstart + Auth guide + ตัวอย่าง SDK เต็ม flow
 - [x] 6.3 Disclaimer + rate-limit/retry notes + คำเตือน publish + observed quirks
+
+---
+
+# Plan v2 — Full API Coverage
+
+เป้าหมาย: ครอบ API ทั้งหมดเท่าที่หาได้ ต่อยอดจาก v1 (create-game flow)
+
+**Decisions:**
+- Destructive endpoints (delete ฯลฯ): สร้าง test data เองแล้วลบ — ไม่แตะของจริง
+- การเดินดัก: Claude ขับ browser เอง (auth-sensitive เช่น signup/reset ให้ผู้ใช้กด, Claude ดัก response)
+- ไม่ยิงรัว เคารพ rate limit
+
+## Phase A — Full Endpoint Discovery  ·  `phase-a-discovery`
+
+- [ ] A.1 วาง capture harness ถาวร (sessionStorage interceptor, log ทุก api.uwufufu.com)
+- [ ] A.2 เดินทุก flow ดักจับ: browse/search, public game, **gameplay (start/vote/result)**, rankings/stats, image selection + upload, manage (edit/delete/duplicate/visibility), media upload (cover), auth extras (signup/logout/reset/oauth — observe), user/profile, comments/likes, subscription
+- [ ] A.3 Bundle string-mining — ดึง `/v1/...` จาก JS chunks เป็น cross-check
+- [ ] A.4 Master endpoint catalog (method/path/auth/params/shape) + sanitized samples
+
+## Phase B — Modeling  ·  `phase-b-spec`
+
+- [ ] B.1 ขยาย `src/types.ts` ครอบ entity/request ใหม่
+- [ ] B.2 ขยาย `docs/openapi.yaml` ครบทุก endpoint
+
+## Phase C — SDK Resources  ·  `phase-c-resources`
+
+- [ ] C.1 `gameplay` (start / getMatch / vote / result)
+- [ ] C.2 `rankings` + stats
+- [ ] C.3 `users` (me / profile / public)
+- [ ] C.4 `media` upload (cover / selection image) + `selections` image/list/update/delete
+- [ ] C.5 `games` browse/get(public)/delete/duplicate
+- [ ] C.6 auth extras (signup/logout/reset ตามที่ดักได้)
+
+## Phase D — Tests  ·  `phase-d-tests`
+
+- [ ] D.1 Unit tests (mock) ทุก resource ใหม่
+- [ ] D.2 ขยาย gated integration test
+
+## Phase E — Docs  ·  `phase-e-docs`
+
+- [ ] E.1 อัปเดต README ครบทุก resource
+- [ ] E.2 อัปเดต docs/endpoints.md ครบทุก endpoint
