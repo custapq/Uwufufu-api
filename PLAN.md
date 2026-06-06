@@ -82,8 +82,8 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase B — Modeling  ·  `phase-b-spec`
 
-- [ ] B.1 ขยาย `src/types.ts` ครอบ entity/request ใหม่
-- [ ] B.2 ขยาย `docs/openapi.yaml` ครบทุก endpoint
+- [x] B.1 ขยาย `src/types.ts`: StartedGame, Match, MatchSelection, StartGameResult, PickResult, requests, SelectionPage, enums
+- [x] B.2 ขยาย `docs/openapi.yaml` → 14 paths, 23 schemas (browse, selections list/delete, game delete, gameplay)
 
 ## Phase C — SDK Resources  ·  `phase-c-resources`
 
