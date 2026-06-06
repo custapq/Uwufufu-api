@@ -1,0 +1,309 @@
+openapi: 3.1.0
+info:
+  title: uwufufu API (unofficial)
+  version: 0.0.0
+  description: >-
+    Unofficial, reverse-engineered specification of the uwufufu.com API,
+    covering the create-game (video) flow: login → create worldcup →
+    add song (video) selections → publish. Derived from observed traffic;
+    not affiliated with or endorsed by uwufufu.
+servers:
+  - url: https://api.uwufufu.com/v1
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: auth
+  - name: games
+  - name: selections
+
+paths:
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Log in with email and password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated; issues an access token.
+        "400":
+          description: Validation error.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /auth/me:
+    get:
+      tags: [auth]
+      summary: Get the authenticated user
+      responses:
+        "200":
+          description: The current user.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "401":
+          description: Missing or invalid token.
+
+  /games:
+    post:
+      tags: [games]
+      summary: Create a draft worldcup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateGameRequest" }
+      responses:
+        "201":
+          description: The created worldcup (visibility IS_CLOSED).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Game" }
+
+  /games/mine:
+    get:
+      tags: [games]
+      summary: List worldcups owned by the authenticated user
+      responses:
+        "200":
+          description: Owned worldcups.
+
+  /games/{id}:
+    put:
+      tags: [games]
+      summary: Update / publish a worldcup
+      description: >-
+        Updates metadata. Publishing is done by setting
+        `visibility: IS_PUBLIC` (with `categoryId` and `locale`).
+      parameters:
+        - $ref: "#/components/parameters/GameId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateGameRequest" }
+      responses:
+        "200":
+          description: The updated worldcup.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Game" }
+
+  /games/{id}/mine:
+    get:
+      tags: [games]
+      summary: Get one owned worldcup (metadata + selectionCount)
+      parameters:
+        - $ref: "#/components/parameters/GameId"
+      responses:
+        "200":
+          description: The owned worldcup.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Game" }
+
+  /selections/video:
+    post:
+      tags: [selections]
+      summary: Add a YouTube (video) selection to a worldcup
+      description: >-
+        The server fetches the video title and derives the embed URL and
+        thumbnail automatically.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AddVideoSelectionRequest" }
+      responses:
+        "201":
+          description: The created selection.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VideoSelection" }
+
+  /categories:
+    get:
+      tags: [games]
+      summary: List worldcup categories
+      security: []
+      responses:
+        "200":
+          description: Categories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Category" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        Access token from POST /auth/login (the `accessToken` cookie in-browser),
+        sent as `Authorization: Bearer <token>`.
+
+  parameters:
+    GameId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+
+  schemas:
+    Visibility:
+      type: string
+      enum: [IS_PUBLIC, IS_PRIVATE, IS_CLOSED]
+
+    Locale:
+      type: string
+      enum:
+        [ar, da, de, el, en, es, fi, fil, fr, hi, hu, id, it, ja, ko, mn, nl,
+         pl, pt-BR, pt, ru, sv, th, tr, vi, zh-Hant, zh]
+
+    ApiError:
+      type: object
+      properties:
+        message:
+          oneOf:
+            - type: string
+            - type: array
+              items: { type: string }
+        error: { type: string }
+        statusCode: { type: integer }
+      required: [message, error, statusCode]
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8, maxLength: 50 }
+
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        email: { type: string }
+        name: { type: string }
+        isVerified: { type: boolean }
+        profileImage: { type: [string, "null"] }
+        tier: { type: string }
+        subscriptionEndDate: { type: [string, "null"] }
+        isAdmin: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    GameUser:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        profileImage: { type: [string, "null"] }
+
+    Category:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        deletedAt: { type: [string, "null"] }
+
+    CreateGameRequest:
+      type: object
+      required: [title, description, visibility, categoryId, isNsfw]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        visibility: { $ref: "#/components/schemas/Visibility" }
+        categoryId: { type: integer }
+        isNsfw: { type: boolean }
+
+    UpdateGameRequest:
+      type: object
+      required: [id]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        visibility: { $ref: "#/components/schemas/Visibility" }
+        categoryId: { type: integer }
+        locale: { $ref: "#/components/schemas/Locale" }
+        isNsfw: { type: boolean }
+        coverImage: { type: [string, "null"] }
+        slug: { type: string }
+
+    AddVideoSelectionRequest:
+      type: object
+      required: [worldcupId, resourceUrl, startTime, endTime]
+      properties:
+        worldcupId: { type: integer }
+        resourceUrl: { type: string, description: YouTube watch URL }
+        startTime: { type: integer, description: seconds }
+        endTime: { type: integer, description: seconds }
+
+    Game:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        visibility: { $ref: "#/components/schemas/Visibility" }
+        coverImage: { type: [string, "null"] }
+        slug: { type: string }
+        isNsfw: { type: boolean }
+        locale:
+          oneOf:
+            - { $ref: "#/components/schemas/Locale" }
+            - { type: "null" }
+        isAdRestricted: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        user: { $ref: "#/components/schemas/GameUser" }
+        plays: { type: integer }
+        finishedPlays: { type: integer }
+        category:
+          description: Present on /mine reads.
+          oneOf:
+            - { $ref: "#/components/schemas/Category" }
+            - { type: "null" }
+        selectionCount:
+          description: Present on /mine reads.
+          type: integer
+
+    VideoSelection:
+      type: object
+      properties:
+        id: { type: integer }
+        gameId: { type: integer }
+        name: { type: string }
+        isVideo: { type: boolean }
+        videoSource: { type: string, enum: [youtube] }
+        videoUrl: { type: string }
+        startTime: { type: integer }
+        endTime: { type: integer }
+        resourceUrl: { type: string }
+        game:
+          type: object
+          properties:
+            id: { type: integer }
+          description: >-
+            Observed quirk: game.id did not always match the top-level gameId.
+        mongoId: { type: [string, "null"] }
+        wins: { type: integer }
+        losses: { type: integer }
+        finalWins: { type: integer }
+        finalLosses: { type: integer }
+        finalWinLossRatio: { type: number }
+        winLossRatio: { type: number }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        deletedAt: { type: [string, "null"] }

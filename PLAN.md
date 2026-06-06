@@ -28,9 +28,9 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase 2 — API Modeling & Spec  ·  `phase-2-spec`
 
-- [ ] 2.1 ตาราง endpoint spec (method, path, params, auth)
-- [ ] 2.2 TypeScript types/interfaces จาก response จริง
-- [ ] 2.3 (option) ร่าง OpenAPI `openapi.yaml`
+- [x] 2.1 ตาราง endpoint spec → [docs/endpoints.md](docs/endpoints.md) (จาก Phase 1)
+- [x] 2.2 TypeScript types/interfaces → [src/types.ts](src/types.ts) (export ผ่าน index)
+- [x] 2.3 OpenAPI spec → [docs/openapi.yaml](docs/openapi.yaml) (8 paths, 12 schemas)
 
 ## Phase 3 — Core SDK  ·  `phase-3-core`
 
