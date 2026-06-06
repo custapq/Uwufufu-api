@@ -73,10 +73,12 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase A — Full Endpoint Discovery  ·  `phase-a-discovery`
 
-- [ ] A.1 วาง capture harness ถาวร (sessionStorage interceptor, log ทุก api.uwufufu.com)
-- [ ] A.2 เดินทุก flow ดักจับ: browse/search, public game, **gameplay (start/vote/result)**, rankings/stats, image selection + upload, manage (edit/delete/duplicate/visibility), media upload (cover), auth extras (signup/logout/reset/oauth — observe), user/profile, comments/likes, subscription
-- [ ] A.3 Bundle string-mining — ดึง `/v1/...` จาก JS chunks เป็น cross-check
-- [ ] A.4 Master endpoint catalog (method/path/auth/params/shape) + sanitized samples
+- [x] A.1 capture harness (sessionStorage interceptor + token redaction)
+- [x] A.2 เดินดัก: browse/search, gameplay (start/pick/complete), selections list/delete, game delete, public selections — บน test data ที่สร้างเองแล้วลบ
+- [~] A.3 (skip) bundle string-mining — ดักจาก traffic จริงครบพอแล้ว
+- [x] A.4 Master catalog → [docs/api-catalog.md](docs/api-catalog.md) + samples → [captures/samples/gameplay-and-management.json](captures/samples/gameplay-and-management.json)
+
+**Gaps เหลือ (interaction เพิ่ม):** image/cover upload (multipart), duplicate game, selection edit/reorder, auth extras (signup/logout/reset/oauth), comments/likes, subscription
 
 ## Phase B — Modeling  ·  `phase-b-spec`
 
