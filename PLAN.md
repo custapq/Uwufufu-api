@@ -56,6 +56,6 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase 6 — Documentation  ·  `phase-6-docs`
 
-- [ ] 6.1 API Reference ครบทุก endpoint ใน README
-- [ ] 6.2 Quickstart + Auth guide + ตัวอย่าง
-- [ ] 6.3 Disclaimer + rate-limit notes
+- [x] 6.1 API Reference ครบทุก endpoint + enums ใน [README.md](README.md)
+- [x] 6.2 Quickstart + Auth guide + ตัวอย่าง SDK เต็ม flow
+- [x] 6.3 Disclaimer + rate-limit/retry notes + คำเตือน publish + observed quirks
