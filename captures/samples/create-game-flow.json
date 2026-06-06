@@ -1,0 +1,118 @@
+{
+  "_note": "Sanitized request/response samples captured from api.uwufufu.com on 2026-06-06. Tokens/emails redacted. Base URL: https://api.uwufufu.com/v1",
+  "auth": {
+    "login": {
+      "method": "POST",
+      "path": "/v1/auth/login",
+      "request": { "email": "<redacted>", "password": "<redacted>" },
+      "validation": {
+        "email": "valid email format",
+        "password": "string, 8-50 chars, required"
+      },
+      "note": "Issues an access token (stored in the accessToken cookie in-browser)."
+    },
+    "me": {
+      "method": "GET",
+      "path": "/v1/auth/me",
+      "headers": { "Authorization": "Bearer <accessToken>" },
+      "response": {
+        "id": 777086,
+        "email": "<redacted>",
+        "name": "custapq",
+        "isVerified": true,
+        "profileImage": null,
+        "tier": "basic",
+        "subscriptionEndDate": null,
+        "isAdmin": false,
+        "createdAt": "2026-06-05T18:14:24.180Z",
+        "updatedAt": "2026-06-05T19:52:50.269Z"
+      }
+    }
+  },
+  "createGame": {
+    "method": "POST",
+    "path": "/v1/games",
+    "status": 201,
+    "request": {
+      "id": 0,
+      "title": "API Test - Song Battle",
+      "description": "Reverse-engineering test game",
+      "visibility": "IS_CLOSED",
+      "categoryId": 19,
+      "isNsfw": false,
+      "createdAt": "2026-06-06T14:35:10.571Z",
+      "updatedAt": "2026-06-06T14:35:10.571Z"
+    },
+    "response": {
+      "id": 159215,
+      "title": "API Test - Song Battle",
+      "description": "Reverse-engineering test game",
+      "visibility": "IS_CLOSED",
+      "coverImage": null,
+      "slug": "api-test---song-battle-custapq",
+      "isNsfw": false,
+      "locale": null,
+      "isAdRestricted": false,
+      "createdAt": "2026-06-06T14:35:12.400Z",
+      "updatedAt": "2026-06-06T14:35:12.400Z",
+      "user": { "id": 777086, "name": "custapq", "profileImage": null },
+      "plays": 0,
+      "finishedPlays": 0
+    }
+  },
+  "addVideoSelection": {
+    "method": "POST",
+    "path": "/v1/selections/video",
+    "status": 201,
+    "request": {
+      "worldcupId": 159215,
+      "resourceUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "startTime": 0,
+      "endTime": 30
+    },
+    "response": {
+      "gameId": 159215,
+      "name": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)",
+      "isVideo": true,
+      "videoSource": "youtube",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "startTime": 0,
+      "endTime": 30,
+      "resourceUrl": "https://img.youtube.com/vi/dQw4w9WgXcQ/sddefault.jpg",
+      "game": { "id": 159211 },
+      "_observed_note": "gameId=159215 but game.id=159211 in the raw response — apparent API quirk; rely on gameId / the worldcupId you sent.",
+      "mongoId": null,
+      "id": 11832271,
+      "wins": 0,
+      "losses": 0,
+      "finalWins": 0,
+      "finalLosses": 0,
+      "finalWinLossRatio": 0,
+      "winLossRatio": 0,
+      "createdAt": "2026-06-06T14:36:40.343Z",
+      "updatedAt": "2026-06-06T14:36:40.343Z",
+      "deletedAt": null
+    }
+  },
+  "publishGame": {
+    "method": "PUT",
+    "path": "/v1/games/159215",
+    "status": 200,
+    "request": {
+      "id": 159215,
+      "title": "API Test - Song Battle",
+      "description": "Reverse-engineering test game",
+      "visibility": "IS_PUBLIC",
+      "coverImage": null,
+      "slug": "api-test---song-battle-custapq",
+      "isNsfw": false,
+      "categoryId": 16,
+      "locale": "en"
+    },
+    "responseShape": [
+      "id", "title", "description", "visibility", "coverImage", "slug",
+      "isNsfw", "category", "locale", "isAdRestricted", "createdAt",
+      "updatedAt", "user", "plays", "finishedPlays"
+    ]
+  }
+}

@@ -10,8 +10,8 @@
 
 | Phase | Description | Status |
 | ----- | ----------- | ------ |
-| 0 | Project setup & tooling | ✅ in progress |
-| 1 | API reconnaissance (HAR) | ⬜ |
+| 0 | Project setup & tooling | ✅ done |
+| 1 | API reconnaissance (create-game flow) | ✅ done |
 | 2 | API modeling & spec | ⬜ |
 | 3 | Core SDK | ⬜ |
 | 4 | Feature coverage | ⬜ |

@@ -19,10 +19,12 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase 1 — API Reconnaissance (แกะ API)  ·  `phase-1-recon`
 
-- [ ] 1.1 รวบรวม HAR จาก DevTools → `captures/raw/`
-- [ ] 1.2 ระบุ base URL / host, auth (cookie/JWT/token), required headers
-- [ ] 1.3 Catalog endpoints (browse, get game, search, play/round, results, ...)
-- [ ] 1.4 เก็บ sample request/response ที่ sanitize แล้ว → `captures/samples/`
+> Scope โฟกัส: **create-game (video) flow** — login → create → set title/desc → add song → publish
+
+- [x] 1.1 ดักจับ traffic ผ่าน Claude-in-Chrome (fetch interceptor, ไม่ใช้ HAR)
+- [x] 1.2 ระบุ base URL (`https://api.uwufufu.com/v1`) + auth (`Bearer accessToken`) → [docs/auth.md](docs/auth.md)
+- [x] 1.3 Catalog endpoints ของ create-game flow → [docs/endpoints.md](docs/endpoints.md)
+- [x] 1.4 เก็บ sanitized samples → [captures/samples/create-game-flow.json](captures/samples/create-game-flow.json)
 
 ## Phase 2 — API Modeling & Spec  ·  `phase-2-spec`
 
