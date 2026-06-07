@@ -25,6 +25,9 @@ Thumbs.db
 CLAUDE.md
 .claude/
 
+# --- Project planning (dev-time only) ---
+PLAN.md
+
 # --- Raw captures may contain auth tokens / cookies ---
 # Commit only sanitized samples; ignore raw HAR by default.
 captures/*.har
