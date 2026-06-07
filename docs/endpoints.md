@@ -1,11 +1,10 @@
-# Endpoint Catalog — Create-Game (Video) Flow
+# Endpoint Catalog
 
 Base URL: **`https://api.uwufufu.com/v1`**
 Auth: **`Authorization: Bearer <accessToken>`** (see [auth.md](./auth.md))
 
-Scope of this catalog: the focused flow **login → create a video worldcup → set
-title/description → add song (video) selections → publish**. Reverse-engineered
-by observing real traffic; undocumented and subject to change.
+Reverse-engineered from observed network traffic; undocumented and subject to change.
+Full master catalog (with shapes and notes) at [`api-catalog.md`](./api-catalog.md).
 
 > Terminology: uwufufu calls a game a **"worldcup"** (a bracket/tournament). The
 > public URL is `/worldcup/:slug`; the editor is `/create-game/:id`.
@@ -218,3 +217,165 @@ POST /v1/games                 → { id, slug }          (draft, IS_CLOSED)
 POST /v1/selections/video  ×N  → add songs             (worldcupId = id)
 PUT  /v1/games/:id             → visibility=IS_PUBLIC  (publish)
 ```
+
+---
+
+## 5. Browse public worldcups
+
+`GET /v1/games`
+
+No auth required. Returns a paginated list of public worldcups.
+
+Query params:
+
+| Param | Type | Notes |
+| ----- | ---- | ----- |
+| `page` | number | 1-based (default 1) |
+| `perPage` | number | default 10 |
+| `search` | string | free-text |
+| `sortBy` | string | e.g. `"plays"`, `"newest"` |
+| `includeNsfw` | boolean | default false |
+
+Response `200`:
+
+```json
+{
+  "page": 1,
+  "perPage": 10,
+  "total": 312,
+  "worldcups": [{ "id": 159215, "title": "…", "slug": "…", "plays": 42 }]
+}
+```
+
+---
+
+## 6. Delete a worldcup
+
+`DELETE /v1/games/:id`  Auth required (owner only).
+
+Response `200` (no body). **Irreversible** — deletes the worldcup and all its selections.
+
+---
+
+## 7. List selections (public)
+
+`GET /v1/selections`
+
+No auth required. Returns selections for a worldcup with win/loss stats — use this to derive rankings.
+
+Query params:
+
+| Param | Type | Notes |
+| ----- | ---- | ----- |
+| `worldcupId` | number | **required** |
+| `page` | number | 1-based |
+| `perPage` | number | |
+| `keyword` | string | search by name |
+| `sortBy` | string | `name` \| `createdAt` \| `winLossRatio` \| `finalWinLossRatio` |
+
+Response `200`:
+
+```json
+{
+  "page": 1,
+  "perPage": 10,
+  "total": 4,
+  "data": [
+    {
+      "id": 11832610,
+      "name": "Song A",
+      "isVideo": true,
+      "videoSource": "youtube",
+      "wins": 3,
+      "losses": 1,
+      "winLossRatio": 0.75,
+      "finalWins": 1,
+      "finalLosses": 0,
+      "finalWinLossRatio": 1.0
+    }
+  ]
+}
+```
+
+> Rankings are derived from this endpoint — there is no separate `/rankings` REST endpoint (it's server-rendered).
+
+---
+
+## 8. List selections (owner)
+
+`GET /v1/selections/mine`  Auth required.
+
+Same query params and response shape as `GET /v1/selections`. Use this when you need owner-only fields.
+
+---
+
+## 9. Delete a selection
+
+`DELETE /v1/selections/:id`  Auth required (owner only).
+
+Response `200` (no body). **Irreversible.**
+
+---
+
+## 10. Gameplay — start a run
+
+`POST /v1/started-games`  Auth required.
+
+Request:
+
+```json
+{ "gameId": 159215, "roundsOf": 4 }
+```
+
+`roundsOf` is the bracket size — must be a power of two (2, 4, 8, 16, …) and ≤ the number of selections.
+
+Response `201`:
+
+```json
+{
+  "startedGame": { "id": 17295538, "roundsOf": 4, "status": "IN_PROGRESS" },
+  "match": {
+    "id": 724694629,
+    "roundsOf": 4,
+    "selection1": { "id": 11832610, "name": "Song A", "isVideo": true, "videoSource": "youtube", "videoUrl": "…", "startTime": 0, "endTime": 20, "resourceUrl": "…" },
+    "selection2": { "id": 11832611, "name": "Song B", "isVideo": true, "videoSource": "youtube", "videoUrl": "…", "startTime": 0, "endTime": 20, "resourceUrl": "…" },
+    "winnerId": null
+  },
+  "matchNumberInRound": 1
+}
+```
+
+---
+
+## 11. Gameplay — pick a winner
+
+`POST /v1/started-games/pick`  Auth required.
+
+Request:
+
+```json
+{ "startedGameId": 17295538, "matchId": 724694629, "pickedSelectionId": 11832610 }
+```
+
+Response `201`: same shape as the start response, with an added `previousMatch`. The next `match` to display is in `result.match`.
+
+**Game-over condition:** when `match` is absent in the response and `startedGame.status === "IS_COMPLETED"`, the bracket is finished. The winner is the `pickedSelectionId` you just sent — there is no separate result endpoint.
+
+---
+
+## 12. Gameplay — list / resume runs
+
+| Method | Path | Notes |
+| ------ | ---- | ----- |
+| `GET` | `/v1/started-games` | All in-progress runs for the authed user |
+| `GET` | `/v1/started-games/:id` | One run (same shape as the start response) |
+
+---
+
+## Not REST endpoints (server-rendered)
+
+These **do not have a JSON API endpoint** — they are server-rendered by Next.js:
+
+- Public single worldcup by `id`/`slug` — use the site URL `uwufufu.com/worldcup/:slug`.
+- Public user profile — no `/users/:id` endpoint; own user via `GET /auth/me` only.
+- Worldcup rankings — derive from `GET /selections?worldcupId=:id&sortBy=winLossRatio`.

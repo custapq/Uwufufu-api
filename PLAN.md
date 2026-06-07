@@ -101,5 +101,5 @@ Unofficial TypeScript/Node.js SDK + API docs, reverse-engineered from uwufufu.co
 
 ## Phase E — Docs  ·  `phase-e-docs`
 
-- [ ] E.1 อัปเดต README ครบทุก resource
-- [ ] E.2 อัปเดต docs/endpoints.md ครบทุก endpoint
+- [x] E.1 อัปเดต README ครบทุก resource
+- [x] E.2 อัปเดต docs/endpoints.md ครบทุก endpoint
