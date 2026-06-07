@@ -18,12 +18,18 @@ export { UwufufuApiError, isUwufufuApiError } from "./errors.js";
 // Resources
 export { GamesResource } from "./resources/games.js";
 export { SelectionsResource } from "./resources/selections.js";
+export { GameplayResource } from "./resources/gameplay.js";
 export type {
   CreateGameInput,
   UpdateGameInput,
   ListMineParams,
+  BrowseParams,
 } from "./resources/games.js";
-export type { AddVideoInput } from "./resources/selections.js";
+export type {
+  AddVideoInput,
+  ListSelectionsParams,
+} from "./resources/selections.js";
+export type { RoundsOf } from "./resources/gameplay.js";
 
 // JSON import helper
 export { importTracks } from "./importer.js";

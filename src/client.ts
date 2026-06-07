@@ -1,6 +1,7 @@
 import { HttpClient, type ClientConfig, type RequestOptions } from "./http.js";
 import type { LoginResponse, User } from "./types.js";
 import { GamesResource } from "./resources/games.js";
+import { GameplayResource } from "./resources/gameplay.js";
 import { SelectionsResource } from "./resources/selections.js";
 
 /**
@@ -17,11 +18,14 @@ export class UwufufuClient {
   readonly games: GamesResource;
   /** Selection (bracket entry) endpoints. */
   readonly selections: SelectionsResource;
+  /** Gameplay (started-game) endpoints. */
+  readonly gameplay: GameplayResource;
 
   constructor(config: ClientConfig = {}) {
     this.http = new HttpClient(config);
     this.games = new GamesResource(this.http);
     this.selections = new SelectionsResource(this.http);
+    this.gameplay = new GameplayResource(this.http);
   }
 
   /** Set or replace the access token used for `Authorization: Bearer`. */
