@@ -1,0 +1,64 @@
+{
+  "_note": "Sanitized samples from api.uwufufu.com v2 discovery (2026-06-06). Captured on a disposable test worldcup that was deleted afterwards. Base: https://api.uwufufu.com/v1",
+
+  "browseGames": {
+    "method": "GET",
+    "path": "/v1/games",
+    "query": { "page": 1, "perPage": 12, "sortBy": "<e.g. createdAt>", "search": "song", "includeNsfw": false },
+    "responseShape": { "page": 1, "perPage": 12, "total": "<n>", "worldcups": ["Game"] }
+  },
+
+  "listSelectionsPublic": {
+    "method": "GET",
+    "path": "/v1/selections",
+    "query": { "worldcupId": 159223, "page": 1, "perPage": 10, "keyword": "", "sortBy": "name|createdAt|winLossRatio|finalWinLossRatio" },
+    "responseShape": { "page": 1, "perPage": 10, "total": "<n>", "data": ["Selection"] }
+  },
+
+  "listSelectionsMine": {
+    "method": "GET",
+    "path": "/v1/selections/mine",
+    "query": { "worldcupId": 159223, "page": 1, "perPage": 10, "keyword": "", "sortBy": "name" },
+    "responseShape": { "page": 1, "perPage": 10, "total": 4, "data": ["Selection (with wins/losses/ratios)"] }
+  },
+
+  "deleteSelection": {
+    "method": "DELETE",
+    "path": "/v1/selections/:id",
+    "status": 200
+  },
+
+  "deleteGame": {
+    "method": "DELETE",
+    "path": "/v1/games/:id",
+    "status": 200
+  },
+
+  "startGame": {
+    "method": "POST",
+    "path": "/v1/started-games",
+    "status": 201,
+    "request": { "gameId": 159223, "roundsOf": 4 },
+    "response": {
+      "startedGame": { "id": 17295538, "roundsOf": 4, "status": "IN_PROGRESS" },
+      "match": {
+        "id": 724694629,
+        "roundsOf": 4,
+        "selection1": { "id": 11832610, "name": "<title>", "isVideo": true, "videoSource": "youtube", "videoUrl": "<embed>", "startTime": 0, "endTime": 20, "resourceUrl": "<thumb>" },
+        "selection2": { "id": 11832611, "name": "<title>", "isVideo": true, "videoSource": "youtube", "videoUrl": "<embed>", "startTime": 0, "endTime": 20, "resourceUrl": "<thumb>" },
+        "winnerId": null
+      },
+      "matchNumberInRound": 1
+    }
+  },
+
+  "pickWinner": {
+    "method": "POST",
+    "path": "/v1/started-games/pick",
+    "status": 201,
+    "request": { "startedGameId": 17295538, "matchId": 724694629, "pickedSelectionId": 11832610 },
+    "responseMid": { "startedGame": "{...IN_PROGRESS}", "previousMatch": "{...}", "match": "{...next match}", "matchNumberInRound": 2 },
+    "responseFinal": { "startedGame": { "id": 17295538, "roundsOf": 4, "status": "IS_COMPLETED" }, "previousMatch": "{...}" },
+    "_note": "Final pick has no `match`; winner = last pickedSelectionId. No separate result endpoint."
+  }
+}

@@ -17,6 +17,7 @@ tags:
   - name: auth
   - name: games
   - name: selections
+  - name: gameplay
 
 paths:
   /auth/login:
@@ -56,6 +57,22 @@ paths:
           description: Missing or invalid token.
 
   /games:
+    get:
+      tags: [games]
+      summary: Browse / search public worldcups
+      security: []
+      parameters:
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: perPage, in: query, schema: { type: integer } }
+        - { name: sortBy, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: includeNsfw, in: query, schema: { type: boolean } }
+      responses:
+        "200":
+          description: Paginated worldcups.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WorldcupPage" }
     post:
       tags: [games]
       summary: Create a draft worldcup
@@ -75,9 +92,15 @@ paths:
     get:
       tags: [games]
       summary: List worldcups owned by the authenticated user
+      parameters:
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: limit, in: query, schema: { type: integer } }
       responses:
         "200":
-          description: Owned worldcups.
+          description: Owned worldcups (paginated).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WorldcupPage" }
 
   /games/{id}:
     put:
@@ -99,6 +122,14 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Game" }
+    delete:
+      tags: [games]
+      summary: Delete a worldcup
+      parameters:
+        - $ref: "#/components/parameters/GameId"
+      responses:
+        "200":
+          description: Deleted.
 
   /games/{id}/mine:
     get:
@@ -131,6 +162,103 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/VideoSelection" }
+
+  /selections:
+    get:
+      tags: [selections]
+      summary: List a worldcup's selections (public, includes stats)
+      security: []
+      parameters:
+        - { name: worldcupId, in: query, required: true, schema: { type: integer } }
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: perPage, in: query, schema: { type: integer } }
+        - { name: keyword, in: query, schema: { type: string } }
+        - { name: sortBy, in: query, schema: { $ref: "#/components/schemas/SelectionSortBy" } }
+      responses:
+        "200":
+          description: Paginated selections.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SelectionPage" }
+
+  /selections/mine:
+    get:
+      tags: [selections]
+      summary: List selections of a worldcup you own
+      parameters:
+        - { name: worldcupId, in: query, required: true, schema: { type: integer } }
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: perPage, in: query, schema: { type: integer } }
+        - { name: keyword, in: query, schema: { type: string } }
+        - { name: sortBy, in: query, schema: { $ref: "#/components/schemas/SelectionSortBy" } }
+      responses:
+        "200":
+          description: Paginated selections.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SelectionPage" }
+
+  /selections/{id}:
+    delete:
+      tags: [selections]
+      summary: Delete a selection
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Deleted.
+
+  /started-games:
+    post:
+      tags: [gameplay]
+      summary: Begin a play-through of a worldcup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StartGameRequest" }
+      responses:
+        "201":
+          description: The started game and first match.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StartGameResult" }
+    get:
+      tags: [gameplay]
+      summary: List the user's started (in-progress) games
+      responses:
+        "200":
+          description: Started games.
+
+  /started-games/pick:
+    post:
+      tags: [gameplay]
+      summary: Pick a winner for the current match
+      description: >-
+        Returns the next match. When the response has no `match` and
+        `startedGame.status` is `IS_COMPLETED`, the game is over and the winner
+        is the `pickedSelectionId` just sent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PickRequest" }
+      responses:
+        "201":
+          description: The result of the pick (and next match, if any).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PickResult" }
+
+  /started-games/{id}:
+    get:
+      tags: [gameplay]
+      summary: Resume a started game (its current match)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: The started game state.
 
   /categories:
     get:
@@ -316,3 +444,79 @@ components:
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
         deletedAt: { type: [string, "null"] }
+
+    SelectionSortBy:
+      type: string
+      enum: [name, createdAt, winLossRatio, finalWinLossRatio]
+
+    SelectionPage:
+      type: object
+      properties:
+        page: { type: integer }
+        perPage: { type: integer }
+        total: { type: integer }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/VideoSelection" }
+
+    StartedGameStatus:
+      type: string
+      enum: [IN_PROGRESS, IS_COMPLETED]
+
+    StartedGame:
+      type: object
+      properties:
+        id: { type: integer }
+        roundsOf: { type: integer }
+        status: { $ref: "#/components/schemas/StartedGameStatus" }
+
+    MatchSelection:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        isVideo: { type: boolean }
+        videoSource: { type: [string, "null"] }
+        videoUrl: { type: [string, "null"] }
+        startTime: { type: integer }
+        endTime: { type: integer }
+        resourceUrl: { type: string }
+
+    Match:
+      type: object
+      properties:
+        id: { type: integer }
+        roundsOf: { type: integer }
+        selection1: { $ref: "#/components/schemas/MatchSelection" }
+        selection2: { $ref: "#/components/schemas/MatchSelection" }
+        winnerId: { type: [integer, "null"] }
+
+    StartGameRequest:
+      type: object
+      required: [gameId, roundsOf]
+      properties:
+        gameId: { type: integer }
+        roundsOf: { type: integer, description: "power of two: 2,4,8,16,…" }
+
+    StartGameResult:
+      type: object
+      properties:
+        startedGame: { $ref: "#/components/schemas/StartedGame" }
+        match: { $ref: "#/components/schemas/Match" }
+        matchNumberInRound: { type: integer }
+
+    PickRequest:
+      type: object
+      required: [startedGameId, matchId, pickedSelectionId]
+      properties:
+        startedGameId: { type: integer }
+        matchId: { type: integer }
+        pickedSelectionId: { type: integer }
+
+    PickResult:
+      type: object
+      properties:
+        startedGame: { $ref: "#/components/schemas/StartedGame" }
+        previousMatch: { $ref: "#/components/schemas/Match" }
+        match: { $ref: "#/components/schemas/Match" }
+        matchNumberInRound: { type: integer }

@@ -151,9 +151,97 @@ export interface WorldcupPage {
   worldcups: Game[];
 }
 
+/**
+ * Paginated selection list, as returned by `GET /selections` (public) and
+ * `GET /selections/mine` (owner).
+ */
+export interface SelectionPage {
+  page: number;
+  perPage: number;
+  total: number;
+  data: VideoSelection[];
+}
+
+/** Sort options for selection listings. */
+export type SelectionSortBy =
+  | "name"
+  | "createdAt"
+  | "winLossRatio"
+  | "finalWinLossRatio";
+
+// ----------------------------------------------------------------------------
+// Gameplay
+// ----------------------------------------------------------------------------
+
+/** Lifecycle of a played game (a "started game"). */
+export type StartedGameStatus = "IN_PROGRESS" | "IS_COMPLETED";
+
+/** A started game (one play-through of a worldcup). */
+export interface StartedGame {
+  id: number;
+  roundsOf: number;
+  status: StartedGameStatus;
+}
+
+/** A selection as presented inside a match (lighter than {@link VideoSelection}). */
+export interface MatchSelection {
+  id: number;
+  name: string;
+  isVideo: boolean;
+  videoSource: VideoSource | null;
+  videoUrl: string | null;
+  startTime: number;
+  endTime: number;
+  resourceUrl: string;
+}
+
+/** A single head-to-head match within a started game. */
+export interface Match {
+  id: number;
+  roundsOf: number;
+  selection1: MatchSelection;
+  selection2: MatchSelection;
+  /** Set once the match has been decided. */
+  winnerId: number | null;
+}
+
+/** Response of `POST /started-games`. */
+export interface StartGameResult {
+  startedGame: StartedGame;
+  match: Match;
+  matchNumberInRound: number;
+}
+
+/**
+ * Response of `POST /started-games/pick`. When `match` is absent and
+ * `startedGame.status === "IS_COMPLETED"`, the game is over and the winner is
+ * the `pickedSelectionId` you just sent.
+ */
+export interface PickResult {
+  startedGame: StartedGame;
+  previousMatch: Match;
+  match?: Match;
+  matchNumberInRound?: number;
+}
+
 // ----------------------------------------------------------------------------
 // Request bodies
 // ----------------------------------------------------------------------------
+
+/** `POST /v1/started-games` — begin a play-through. */
+export interface StartGameRequest {
+  gameId: number;
+  /** Bracket size (power of two): 2, 4, 8, 16, … */
+  roundsOf: number;
+}
+
+/** `POST /v1/started-games/pick` — pick a winner for the current match. */
+export interface PickRequest {
+  startedGameId: number;
+  matchId: number;
+  pickedSelectionId: number;
+}
+
 
 /** `POST /v1/auth/login` */
 export interface LoginRequest {

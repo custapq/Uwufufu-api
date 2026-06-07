@@ -1,5 +1,14 @@
 import type { HttpClient } from "../http.js";
-import type { VideoSelection } from "../types.js";
+import type { SelectionPage, SelectionSortBy, VideoSelection } from "../types.js";
+
+/** Query params for {@link SelectionsResource.list} and {@link SelectionsResource.listMine}. */
+export interface ListSelectionsParams {
+  worldcupId: number;
+  page?: number;
+  perPage?: number;
+  keyword?: string;
+  sortBy?: SelectionSortBy;
+}
 
 /** Friendly input for {@link SelectionsResource.addVideo}. */
 export interface AddVideoInput {
@@ -41,5 +50,53 @@ export class SelectionsResource {
         endTime: input.endTime ?? 0,
       },
     });
+  }
+
+  /**
+   * `GET /selections` — public selection list for a worldcup (includes win/loss stats).
+   *
+   * No auth required.
+   *
+   * @example
+   * ```ts
+   * const page = await client.selections.list({ worldcupId: 123, sortBy: "winLossRatio" });
+   * ```
+   */
+  list(params: ListSelectionsParams): Promise<SelectionPage> {
+    return this.http.request<SelectionPage>("GET", "/selections", {
+      query: {
+        worldcupId: params.worldcupId,
+        page: params.page,
+        perPage: params.perPage,
+        keyword: params.keyword,
+        sortBy: params.sortBy,
+      },
+    });
+  }
+
+  /**
+   * `GET /selections/mine` — owner's selection list for a worldcup.
+   *
+   * Requires auth. Returns the same shape as {@link list}.
+   */
+  listMine(params: ListSelectionsParams): Promise<SelectionPage> {
+    return this.http.request<SelectionPage>("GET", "/selections/mine", {
+      query: {
+        worldcupId: params.worldcupId,
+        page: params.page,
+        perPage: params.perPage,
+        keyword: params.keyword,
+        sortBy: params.sortBy,
+      },
+    });
+  }
+
+  /**
+   * `DELETE /selections/:id` — permanently delete a selection you own.
+   *
+   * **Irreversible.**
+   */
+  delete(id: number): Promise<void> {
+    return this.http.request<void>("DELETE", `/selections/${id}`);
   }
 }

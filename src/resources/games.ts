@@ -34,6 +34,17 @@ export interface ListMineParams {
   limit?: number;
 }
 
+/** Query params for {@link GamesResource.browse}. */
+export interface BrowseParams {
+  page?: number;
+  perPage?: number;
+  /** Free-text search. */
+  search?: string;
+  /** `"newest"` | `"oldest"` | `"plays"` | … (observed: API accepts arbitrary strings). */
+  sortBy?: string;
+  includeNsfw?: boolean;
+}
+
 /** Worldcup ("game") endpoints. */
 export class GamesResource {
   constructor(private readonly http: HttpClient) {}
@@ -127,5 +138,34 @@ export class GamesResource {
     options: { categoryId?: number; locale?: Locale } = {},
   ): Promise<Game> {
     return this.update(id, { ...options, visibility: "IS_PUBLIC" });
+  }
+
+  /**
+   * `GET /games` — browse public worldcups.
+   *
+   * @example
+   * ```ts
+   * const page = await client.games.browse({ search: "kpop", perPage: 20 });
+   * ```
+   */
+  browse(params: BrowseParams = {}): Promise<WorldcupPage> {
+    return this.http.request<WorldcupPage>("GET", "/games", {
+      query: {
+        page: params.page,
+        perPage: params.perPage,
+        search: params.search,
+        sortBy: params.sortBy,
+        includeNsfw: params.includeNsfw,
+      },
+    });
+  }
+
+  /**
+   * `DELETE /games/:id` — permanently delete a worldcup you own.
+   *
+   * **Irreversible.** Deletes the worldcup and all its selections.
+   */
+  delete(id: number): Promise<void> {
+    return this.http.request<void>("DELETE", `/games/${id}`);
   }
 }
