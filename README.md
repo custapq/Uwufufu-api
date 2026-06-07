@@ -4,6 +4,8 @@
 
 **Unofficial TypeScript SDK + full API reference for [uwufufu.com](https://uwufufu.com)**
 
+</div>
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -34,8 +36,6 @@
 - [Types](#types)
 - [Low-level escape hatch](#low-level-escape-hatch)
 - [Known gaps](#known-gaps)
-
-</div>
 
 > [!WARNING]
 > Not affiliated with, endorsed by, or supported by uwufufu. Everything here was **reverse-engineered from network traffic** for interoperability. Endpoints are undocumented and may change or break without notice. Respect uwufufu's Terms of Service and don't hammer the API.
